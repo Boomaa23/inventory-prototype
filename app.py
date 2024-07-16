@@ -11,8 +11,12 @@ dotenv.load_dotenv()
 app = flask.Flask(__name__)
 
 with app.app_context():
-    _table_keys = ", ".join([f"'{k}'" for k in models.BLANK_ITEM.to_dict().keys()])
-    common.get_db().cursor().execute(f'CREATE TABLE IF NOT EXISTS inventory({_table_keys})').close()
+    _inv_table_keys = ", ".join([f"'{k}'" for k in models.BLANK_ITEM.to_dict().keys()])
+    common.get_db().cursor().execute(f'CREATE TABLE IF NOT EXISTS inventory({_inv_table_keys})').close()
+
+    _user_table_keys = ", ".join([f"'{k}'" for k in models.BLANK_USER.to_dict().keys()])
+    common.get_db().cursor().execute(f'CREATE TABLE IF NOT EXISTS users({_user_table_keys})').close()
+    
 
 app.register_blueprint(api_blueprint)
 app.register_blueprint(root_blueprint)

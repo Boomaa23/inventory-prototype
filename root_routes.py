@@ -4,7 +4,7 @@ import api_routes
 import models
 
 
-root_blueprint = flask.Blueprint('user', __name__)
+root_blueprint = flask.Blueprint('root', __name__)
 
 
 @root_blueprint.route('/', methods=['GET'])
