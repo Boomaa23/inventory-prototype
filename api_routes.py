@@ -10,7 +10,7 @@ api_blueprint = flask.Blueprint('api', __name__)
 
 
 @api_blueprint.route('/api/item/get/<db_id>', methods=['GET'])
-def api_item_get(db_id):
+def api_item_get(db_id: str):
     res = common.get_db().cursor().execute(f"SELECT * FROM inventory WHERE db_id='{db_id}'")
     db_item = res.fetchone()
     item = models.Item(*db_item)
@@ -43,7 +43,7 @@ def api_item_remove():
 
 
 @api_blueprint.route('/api/reservation/get/<db_id>', methods=['GET'])
-def api_reservation_get(db_id):
+def api_reservation_get(db_id: str):
     pass
 
 

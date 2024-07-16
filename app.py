@@ -1,18 +1,21 @@
+import dotenv
 import flask
 
+import common
+import models
 from api_routes import api_blueprint
 from root_routes import root_blueprint
 
 
+dotenv.load_dotenv()
 app = flask.Flask(__name__)
+
+with app.app_context():
+    _table_keys = ", ".join([f"'{k}'" for k in models.BLANK_ITEM.to_dict().keys()])
+    common.get_db().cursor().execute(f'CREATE TABLE IF NOT EXISTS inventory({_table_keys})').close()
+
 app.register_blueprint(api_blueprint)
 app.register_blueprint(root_blueprint)
-
-
-# @api_blueprint.route('/api/init')
-# def init():
-#     common.get_db().cursor().execute('CREATE TABLE inventory(db_id, mfg_part_number, quantity, description, reserved)').close()
-#     return 'init page'
 
 
 @app.teardown_appcontext
