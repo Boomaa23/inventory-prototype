@@ -1,42 +1,38 @@
 import enum
-import typing
 
 import flask
 
 import common
 
 
-class Scope(enum.Enum):
-    ITEM_GET = 0b1 << 0
-    ITEM_CREATE = 0b1 << 1
-    ITEM_UPDATE = 0b1 << 2
-    ITEM_REMOVE = 0b1 << 3
-    RESERVATION_GET = 0b1 << 4
-    RESERVATION_CREATE = 0b1 << 5
-    RESERVATION_UPDATE = 0b1 << 6
-    RESERVATION_REMOVE = 0b1 << 7
-    ITEMS_LIST = 0b1 << 8
-    ITEMS_BULKADD = 0b1 << 9
-    USER_GET = 0b1 << 10
-    USER_CREATE = 0b1 << 11
-    USER_UPDATE = 0b1 << 12
-    USER_REMOVE = 0b1 << 13
-
-    def __or__(self, other):
-        return (self.value | other.value) if isinstance(other, Scope) else (self or other)
-
-    def __and__(self, other):
-        return (self.value & other.value) if isinstance(other, Scope) else (self or other)
+# Evaluates to powers of two, ascending with ordinal
+# See: https://docs.python.org/3/library/enum.html#enum.auto
+# See: https://docs.python.org/3/library/enum.html#enum.IntFlag
+class Scope(enum.IntFlag):
+    ITEM_GET = enum.auto()
+    ITEM_CREATE = enum.auto()
+    ITEM_UPDATE = enum.auto()
+    ITEM_REMOVE = enum.auto()
+    RESERVATION_GET = enum.auto()
+    RESERVATION_CREATE = enum.auto()
+    RESERVATION_UPDATE = enum.auto()
+    RESERVATION_REMOVE = enum.auto()
+    ITEMS_LIST = enum.auto()
+    ITEMS_BULKADD = enum.auto()
+    USER_GET = enum.auto()
+    USER_CREATE = enum.auto()
+    USER_UPDATE = enum.auto()
+    USER_REMOVE = enum.auto()
 
 
-def require_auth(req_authmask: typing.Union[Scope, int], user_db_id: str) -> None:
+def require_auth(req_authmask: Scope, api_key: str) -> None:
     if isinstance(req_authmask, Scope):
         req_authmask = req_authmask.value
 
-    if common.is_dirty(user_db_id):
+    if common.is_dirty(api_key):
         flask.abort(400)
 
-    res = common.get_db().cursor().execute(f"SELECT authmask FROM users WHERE db_id='{user_db_id}'")
+    res = common.get_db().cursor().execute(f"SELECT authmask FROM users WHERE api_key='{api_key}'")
     db_authmask = res.fetchone()
 
     if db_authmask is None or len(db_authmask) != 1:

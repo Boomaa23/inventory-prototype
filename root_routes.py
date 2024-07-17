@@ -13,9 +13,9 @@ def root():
     return flask.render_template('view_multiple.html', items=items)
 
 
-@root_blueprint.route('/<db_id>', methods=['GET'])
-def root_db_id(db_id: str):
-    api_resp = api_routes.api_item_get(db_id)
+@root_blueprint.route('/<item_id>', methods=['GET'])
+def root_item_id(item_id: str):
+    api_resp = api_routes.api_item_get(item_id)
     item = models.Item(*api_resp.values())
     return flask.render_template('view_single.html', item=item, view_url=flask.request.base_url)
 
